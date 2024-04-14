@@ -1,62 +1,50 @@
 #include <boost/asio.hpp>
 #include <iostream>
 #include <optional>
-#include <vector>
-
-class client {
-  public:
-    client(){
-
-    }
-private:
-
-};
-
 
 class session: public std::enable_shared_from_this<session> {
-  public:
+public:
     session(boost::asio::ip::tcp::socket&& socket) :
-        socket(std::move(socket)) {}
+            socket(std::move(socket)) {}
 
     void start() {
         boost::asio::async_read_until(
-            socket,
-            streambuf,
-            '\n',
-            [self = shared_from_this()](
-                boost::system::error_code error,
-                std::size_t bytes_transferred) {
-                std::cout << std::istream(&self->streambuf).rdbuf();
-            });
+                socket,
+                streambuf,
+                '\n',
+                [self = shared_from_this()](
+                        boost::system::error_code error,
+                        std::size_t bytes_transferred) {
+                    std::cout << std::istream(&self->streambuf).rdbuf();
+                });
     }
 
-  private:
+private:
     boost::asio::ip::tcp::socket socket;
     boost::asio::streambuf streambuf;
 };
 
 class server {
-  public:
+public:
     server(boost::asio::io_context& io_context, std::uint16_t port) :
-        io_context(io_context),
-        acceptor(
-            io_context,
-            boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)) {}
+            io_context(io_context),
+            acceptor(
+                    io_context,
+                    boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)) {}
 
     void async_accept() {
         socket.emplace(io_context);
 
         acceptor.async_accept(*socket, [&](boost::system::error_code error) {
-            std::make_shared<session>(std::move(*socket));
+            std::make_shared<session>(std::move(*socket))->start();
             async_accept();
         });
     }
 
-  private:
+private:
     boost::asio::io_context& io_context;
     boost::asio::ip::tcp::acceptor acceptor;
     std::optional<boost::asio::ip::tcp::socket> socket;
-    std::vector<std::shared_ptr<session>> clients;
 };
 
 int main() {
