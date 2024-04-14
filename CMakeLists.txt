@@ -21,13 +21,13 @@ find_package(Boost REQUIRED)
 
 
 add_executable(server Server/server.cpp)
-add_executable(client Client/client.cpp)
+#add_executable(client Client/client.cpp)
 
 if(Boost_FOUND)
     target_include_directories(server PUBLIC ${Boost_INCLUDE_DIR})
     target_link_libraries(server ${Boost_LIBRARIES})
-    target_include_directories(client PUBLIC ${Boost_INCLUDE_DIR})
-    target_link_libraries(client ${Boost_LIBRARIES})
+#    target_include_directories(client PUBLIC ${Boost_INCLUDE_DIR})
+#    target_link_libraries(client ${Boost_LIBRARIES})
     message(STATUS "Found BOOST ${Boost_VERSION_STRING}")
 else()
     message(STATUS "WEBSOCKET BOOST Not Found")
