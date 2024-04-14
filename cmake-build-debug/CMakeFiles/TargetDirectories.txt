@@ -1,4 +1,0 @@
-/home/dmirty/Coding/c++/Boost/Asio/GovnoChat/cmake-build-debug/CMakeFiles/server.dir
-/home/dmirty/Coding/c++/Boost/Asio/GovnoChat/cmake-build-debug/CMakeFiles/client.dir
-/home/dmirty/Coding/c++/Boost/Asio/GovnoChat/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/dmirty/Coding/c++/Boost/Asio/GovnoChat/cmake-build-debug/CMakeFiles/rebuild_cache.dir

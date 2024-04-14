@@ -8,7 +8,7 @@ void client(){
 
     boost::asio::io_context io_context;
     boost::asio::ip::udp::socket socket(io_context);
-    boost::asio::ip::udp::endpoint serv(boost::asio::ip::udp::v4(), port);
+    boost::asio::ip::udp::endpoint serv(boost::asio::ip::address_v4, port);
     socket.open(boost::asio::ip::udp::v4());
     while (true) {
         std::string buffer;
