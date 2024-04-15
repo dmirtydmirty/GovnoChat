@@ -2,6 +2,7 @@
 #include <iostream>
 #include <optional>
 #include <vector>
+#include <unordered_set>
 
 class session: public std::enable_shared_from_this<session> {
 public:
@@ -29,26 +30,18 @@ public:
                 std::size_t bytes_transferred) {
                 if (error){
                     std::cerr << error.message() << std::endl;
+                    return;
                 }
-
+                std::stringstream message;
+                message << self->socket.remote_endpoint() << ": " << std::istream(&self->streambuf).rdbuf();
+                self->message_handler(message.str());
+                self->async_read();
             });
     }
 
-    void start() {
-        boost::asio::async_read_until(
-            socket,
-            streambuf,
-            '\n',
-            [self = shared_from_this()](
-                boost::system::error_code error,
-                std::size_t bytes_transferred) {
-                if (error){
-                    std::cerr << error.message() << std::endl;
-                }
-                std::cout << "RECEIVED: " << std::istream(&self->streambuf).rdbuf();
-//                self->send_to_client("Welcome to the GovnoChat");
-//                self->messages.push_back(self->streambuf.);
-            });
+    void start(std::function<void(std::string)>&& on_message) {
+        this->message_handler=on_message;
+        this->async_read();
     }
 
 
@@ -57,6 +50,7 @@ public:
     boost::asio::ip::tcp::socket socket;
     boost::asio::streambuf streambuf;
     std::vector<std::string> messages;
+    std::function<void(std::string)> message_handler;
 };
 
 class server {
@@ -72,10 +66,13 @@ public:
 
         acceptor.async_accept(*socket, [&](boost::system::error_code error) {
             std::cout << "New connection from " << socket->remote_endpoint() << std::endl;
-//            std::make_shared<session>(std::move(*socket))->start();
+            std::string new_client = socket->remote_endpoint().address().to_string() + ":" +
+                              std::to_string(socket->remote_endpoint().port());
+            post(new_client + " is connected\n\r");
             auto new_session= std::make_shared<session>(std::move(*socket));
-            new_session->start();
-            clients.push_back(new_session);
+            new_session->start(std::bind(&server::post, this, std::placeholders::_1));
+            new_session->async_write("Welcome to chat, dolboeb\n\r");
+            clients.insert(new_session);
             async_accept();
         });
     }
@@ -88,7 +85,7 @@ public:
     boost::asio::io_context& io_context;
     boost::asio::ip::tcp::acceptor acceptor;
     std::optional<boost::asio::ip::tcp::socket> socket;
-    std::vector<std::shared_ptr<session>> clients;
+    std::unordered_set<std::shared_ptr<session>> clients;
 };
 
 int main() {

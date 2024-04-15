@@ -1,6 +1,6 @@
 import socket
 import sys
-target_host = "127.0.0.0"
+target_host = "localhost"
 target_port = 15001
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((target_host, target_port))
