@@ -88,7 +88,7 @@ public:
     std::unordered_set<std::shared_ptr<session>> clients;
 };
 
-int main() {
+int main(int argc, char *argv[]) {
     boost::asio::io_context io_context;
     server srv(io_context, 15001);
     srv.async_accept();
