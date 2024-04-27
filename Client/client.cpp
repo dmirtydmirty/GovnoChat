@@ -6,6 +6,8 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTextEdit>
 
 void client(){
     std::uint16_t port = 15001;
@@ -26,18 +28,24 @@ void client(){
 }
 
 
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-
-    QWidget widget;
-    widget.setWindowTitle("You have a trojan");
-    widget.setMinimumHeight(180);
-    widget.setMinimumWidth(300);
-
-    QLabel label{&widget};
-    label.setText("You have a virus, dolboeb");
-
-    widget.show();
-    return app.exec();
-    return 0;
+int main(int argc, char **argv)
+{
+//    QApplication app(argc, argv);
+//
+//    QLabel* label = new QLabel("GovnoChat client");
+//
+//    QTextEdit textEdit;
+//    QPushButton quitButton("Send");
+//    QObject::connect(&quitButton, SIGNAL(clicked()), qApp, SLOT(quit()));
+//    QVBoxLayout layout;
+//    layout.addWidget(&textEdit);
+//    layout.addWidget(&quitButton);
+//    layout.addWidget(label);
+//
+//    QWidget window;
+//    window.setLayout(&layout);
+//
+//    window.show();
+//
+//    return app.exec();
 }

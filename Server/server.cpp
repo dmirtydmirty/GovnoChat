@@ -12,11 +12,14 @@ public:
     void async_write(std::string msg){
         boost::asio::async_write(
             socket, boost::asio::buffer(msg),
-            [](
+            [self = shared_from_this()](
                 boost::system::error_code error,
                 size_t bytes_transferred){
                 if (error){
-                std::cerr << error.message() << std::endl;
+                    std::stringstream msg;
+                    msg << self->socket.remote_endpoint() << " was disconnected" << std::endl;
+                    std::cout << msg.str();
+                    self->message_handler(msg.str());
             }
         });
     }
@@ -29,7 +32,10 @@ public:
                 boost::system::error_code error,
                 std::size_t bytes_transferred) {
                 if (error){
-                    std::cerr << error.message() << std::endl;
+                    std::stringstream msg;
+                    msg << self->socket.remote_endpoint() << " was disconnected" << std::endl;
+                    std::cout << msg.str();
+                    self->message_handler(msg.str());
                     return;
                 }
                 std::stringstream message;
