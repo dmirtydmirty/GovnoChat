@@ -1,25 +1,14 @@
-cmake_minimum_required(VERSION 3.27)
-project(GovnoChat)
+cmake_minimum_required(VERSION 3.25)
+project(Server)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 set(Boost_USE_STATIC_LIBS   ON)
 
-IF (WIN32)
-    set(BOOST_ROOT "C:/boost-build")
-    set(BOOST_INCLUDEDIR "C:/boost-build/include/boost-1_84")
-    find_package(Boost REQUIRED)
-
-    if (MINGW)
-        link_libraries(ws2_32 wsock32)
-    endif ()
-    message(STATUS "WIN32")
-ENDIF()
-
 find_package(Boost REQUIRED)
 
-
-add_executable(server server.cpp)
+set(SOURCES Source/server.cpp)
+add_executable(server ${SOURCES})
 set(CMAKE_EXE_LINKER_FLAGS " -static")
 target_link_libraries(server -static-libgcc -static-libstdc++)
 if(Boost_FOUND)

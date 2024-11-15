@@ -1,0 +1,12 @@
+{
+    "image": "govno-chat-build",
+
+    "customizations": {
+        "vscode": {
+            "extensions": [ "ms-vscode.cpptools-extension-pack",
+                            "ms-vscode.cmake-tools",
+                            "twxs.cmake"]
+        }
+    }
+  }
+  
