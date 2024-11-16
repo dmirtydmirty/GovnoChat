@@ -1,5 +1,5 @@
 {
-    "image": "govno-chat-build",
+    "image": "ghcr.io/dmirtydmirty/boost1-86-0",
 
     "customizations": {
         "vscode": {
