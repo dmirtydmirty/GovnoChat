@@ -1,5 +1,4 @@
-name: срусл
-
+name: build
 on: push
 jobs:
   build:
