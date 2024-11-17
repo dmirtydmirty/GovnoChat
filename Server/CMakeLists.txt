@@ -7,7 +7,9 @@ set(Boost_USE_STATIC_LIBS   ON)
 
 find_package(Boost REQUIRED)
 
-set(SOURCES Source/server.cpp)
+set(SOURCES Source/TCPServer.cpp
+            Source/Session.cpp
+            )
 
 add_library(tcp_server ${SOURCES})
 
