@@ -16,6 +16,7 @@ public:
 private:
     void async_accept();
     void post(std::string msg);
+    void sendAll(std::string msg, uint32_t senderId);
     boost::asio::io_context& io_context;
     boost::asio::ip::tcp::acceptor acceptor;
     std::optional<boost::asio::ip::tcp::socket> socket;

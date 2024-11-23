@@ -9,12 +9,15 @@ public:
     Session(boost::asio::ip::tcp::socket&& socket);
     void send(std::string msg);
     void receive();
-    void start(std::function<void(std::string)>&& on_message);
+    void start(std::function<void(std::string, uint32_t)>&& on_message);
+    uint32_t getId() const {return id;}
 private:
+    static inline uint32_t id_ctr{0};
+    uint32_t id;
     boost::asio::ip::tcp::socket socket;
     boost::asio::streambuf streambuf;
     std::vector<std::string> messages;
-    std::function<void(std::string)> message_handler;
+    std::function<void(std::string, uint32_t)> message_handler;
 };
 
 #endif
