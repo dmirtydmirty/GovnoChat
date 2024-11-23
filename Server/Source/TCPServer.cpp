@@ -18,30 +18,42 @@ void TCPServer::start(){
     std::cout << "Sarting TCP server " << std::endl; 
     acceptor.listen();
     std::cout << "Serever listens the port: " << this->acceptor.local_endpoint().port() << std::endl;
-    this->async_accept();
+    this->asyncAccept();
 }
 
-void TCPServer::async_accept() {
+void TCPServer::stop(){
+    io_context.stop();
+}
+
+void TCPServer::asyncAccept() {
     socket.emplace(io_context);
     acceptor.async_accept(*socket, [&](boost::system::error_code error) {
+
+        if (error){
+            std::cout << "Accept failed with code: " << error.value() << " " << error.message() << std::endl;
+            stop();
+        }
         std::cout << "New connection from " << socket->remote_endpoint() << std::endl;
-        std::string new_client = socket->remote_endpoint().address().to_string() + ":" +
-                            std::to_string(socket->remote_endpoint().port());
-        post(new_client + " is connected\n\r");
-        auto new_session= std::make_shared<Session>(std::move(*socket));
-        new_session->start(std::bind(&TCPServer::sendAll, this, std::placeholders::_1, std::placeholders::_2));
-        clients.insert(new_session);
-        std::cout << "Created new session id: " << new_session->getId() << std::endl;
-        async_accept();
+
+        asyncAccept();
     });
 }
 
+void TCPServer::createSession(){
+        post(socket->remote_endpoint().address().to_string() + ":" +
+                            std::to_string(socket->remote_endpoint().port()) + " is connected\n\r");
+        auto new_session= std::make_shared<Session>(std::move(*socket));
+        new_session->start(std::bind(&TCPServer::sendAll, this, std::placeholders::_1, std::placeholders::_2));
+        clients.insert(std::move(new_session));
+        std::cout << "New session created id: " << new_session->getId() << std::endl;
+}
 
 void TCPServer::post(std::string msg){
     for (auto client: clients) {
         client->send(msg);
     }
 }
+
 void TCPServer::sendAll(std::string msg,  uint32_t senderId){
     for (auto client: clients) {
         if (client->getId() != senderId)
