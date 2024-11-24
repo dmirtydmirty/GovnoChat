@@ -5,7 +5,7 @@
 Session::Session(boost::asio::ip::tcp::socket&& socket) :
         socket(std::move(socket)) {
             this->id = id_ctr++;
-        }
+}
 
 void Session::send(std::string msg){
     boost::asio::async_write(
