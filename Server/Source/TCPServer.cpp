@@ -34,7 +34,7 @@ void TCPServer::asyncAccept() {
             stop();
         }
         std::cout << "New connection from " << socket->remote_endpoint() << std::endl;
-
+        createSession();
         asyncAccept();
     });
 }
@@ -44,8 +44,8 @@ void TCPServer::createSession(){
                             std::to_string(socket->remote_endpoint().port()) + " is connected\n\r");
         auto new_session= std::make_shared<Session>(std::move(*socket));
         new_session->start(std::bind(&TCPServer::sendAll, this, std::placeholders::_1, std::placeholders::_2));
-        clients.insert(std::move(new_session));
         std::cout << "New session created id: " << new_session->getId() << std::endl;
+        clients.insert(std::move(new_session));
 }
 
 void TCPServer::post(std::string msg){
