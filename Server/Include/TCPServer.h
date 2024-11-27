@@ -5,7 +5,7 @@
 #include <iostream>
 #include <optional>
 #include <vector>
-#include <unordered_set>
+#include <map>
 
 #include "Session.h"
 
@@ -14,6 +14,7 @@ public:
     TCPServer(boost::asio::io_context& io_context, std::uint16_t port);
     void start();
     void stop();
+    void deleteSessionById(uint32_t id);
 private:
     void asyncAccept();
     void createSession();
@@ -22,7 +23,7 @@ private:
     boost::asio::io_context& io_context;
     boost::asio::ip::tcp::acceptor acceptor;
     std::optional<boost::asio::ip::tcp::socket> socket;
-    std::unordered_set<std::shared_ptr<Session>> clients;
+    std::map<uint32_t, std::shared_ptr<Session>> clients;
 };
 
 #endif

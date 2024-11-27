@@ -1,4 +1,5 @@
 #include "../Include/Session.h"
+#include "../Include/TCPServer.h"
 #include <iostream>
 
 
@@ -18,8 +19,13 @@ void Session::send(std::string msg){
                 msg << self->socket.remote_endpoint() << " was disconnected" << std::endl;
                 std::cout << msg.str();
                 self->message_handler(msg.str(), self->getId());
+                self->disconnect_handler();
         }
     });
+}
+
+Session::~Session(){
+    this->socket.close();
 }
 
 void Session::receive(){
@@ -35,6 +41,7 @@ void Session::receive(){
                 msg << self->socket.remote_endpoint() << " was disconnected" << std::endl;
                 std::cout << msg.str();
                 self->message_handler(msg.str(), self->getId());
+                self->disconnect_handler();
                 return;
             }
             std::stringstream message;
@@ -43,8 +50,10 @@ void Session::receive(){
             self->receive();
         });
 }
-void Session::start(std::function<void(std::string, uint32_t)>&& on_message) {
-    this->message_handler=on_message;
+void Session::start(std::function<void(std::string, uint32_t)>&& on_message,
+                std::function<void()>&& on_disconnect) {
+    this->message_handler = on_message;
+    this->disconnect_handler = on_disconnect;
     this->send("Welcome to chat\n\r");
     this->receive();
 }

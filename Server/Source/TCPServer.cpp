@@ -2,7 +2,7 @@
 #include <iostream>
 #include <optional>
 #include <vector>
-#include <unordered_set>
+#include <map>
 #include <memory>
 
 #include "../Include/TCPServer.h"
@@ -46,20 +46,25 @@ void TCPServer::createSession(){
         post(socket->remote_endpoint().address().to_string() + ":" +
                             std::to_string(socket->remote_endpoint().port()) + " is connected\n\r");
         auto new_session= std::make_shared<Session>(std::move(*socket));
-        new_session->start(std::bind(&TCPServer::sendAll, this, std::placeholders::_1, std::placeholders::_2));
+        new_session->start(std::bind(&TCPServer::sendAll, this, std::placeholders::_1, std::placeholders::_2),
+                            std::bind(&TCPServer::deleteSessionById, this, new_session->getId()));
         std::cout << "New session created id: " << new_session->getId() << std::endl;
-        clients.insert(std::move(new_session));
+        clients.insert({new_session->getId(), std::move(new_session)});
 }
 
 void TCPServer::post(std::string msg){
     for (auto client: clients) {
-        client->send(msg);
+        client.second->send(msg);
     }
 }
 
 void TCPServer::sendAll(std::string msg,  uint32_t senderId){
     for (auto client: clients) {
-        if (client->getId() != senderId)
-            client->send(msg);
+        if (client.second->getId() != senderId)
+            client.second->send(msg);
     }
+}
+
+void TCPServer::deleteSessionById(uint32_t id){
+    clients.erase(id);
 }
