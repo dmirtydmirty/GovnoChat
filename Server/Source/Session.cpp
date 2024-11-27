@@ -45,6 +45,6 @@ void Session::receive(){
 }
 void Session::start(std::function<void(std::string, uint32_t)>&& on_message) {
     this->message_handler=on_message;
-    this->send("Welcome to chat, dolboeb\n\r");
+    this->send("Welcome to chat\n\r");
     this->receive();
 }

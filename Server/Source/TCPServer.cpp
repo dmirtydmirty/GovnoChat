@@ -8,11 +8,14 @@
 #include "../Include/TCPServer.h"
 #include "../Include/Session.h"
 
-TCPServer::TCPServer(boost::asio::io_context& io_context, std::uint16_t port) :
+TCPServer::TCPServer(boost::asio::io_context& io_context, std::uint16_t port) try:
         io_context(io_context),
         acceptor(
                 io_context,
                 boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)) {}
+        catch (const boost::system::system_error & err){
+            std::cout << "TCPServer::TCPServer: an error " << err.code() << " occured: "<< err.what() << std::endl;
+        }
 
 void TCPServer::start(){
     std::cout << "Sarting TCP server " << std::endl; 
