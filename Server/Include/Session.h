@@ -13,6 +13,10 @@ public:
     void start(std::function<void(std::string, uint32_t)>&& on_message,
                 std::function<void()>&& on_disconnect);
     uint32_t getId() const {return id;}
+    
+    static inline std::string USER_MSG_MARKER   = "USERMSG";
+    static inline std::string SERVER_MSG_MARKER = "SERVERMSG";
+    static inline std::string DELIMITER         = "///";  
 private:
     static inline uint32_t id_ctr{0};
     uint32_t id;

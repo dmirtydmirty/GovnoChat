@@ -43,8 +43,9 @@ void TCPServer::asyncAccept() {
 }
 
 void TCPServer::createSession(){
-        post(socket->remote_endpoint().address().to_string() + ":" +
-                            std::to_string(socket->remote_endpoint().port()) + " is connected\n\r");
+    std::stringstream msg;
+        msg << Session::SERVER_MSG_MARKER << Session::DELIMITER << socket->remote_endpoint() << " is connected\n\r";
+        post(msg.str());
         auto new_session= std::make_shared<Session>(std::move(*socket));
         new_session->start(std::bind(&TCPServer::sendAll, this, std::placeholders::_1, std::placeholders::_2),
                             std::bind(&TCPServer::deleteSessionById, this, new_session->getId()));

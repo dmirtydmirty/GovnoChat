@@ -16,7 +16,7 @@ void Session::send(std::string msg){
             size_t bytes_transferred){
             if (error){
                 std::stringstream msg;
-                msg << self->socket.remote_endpoint() << " was disconnected" << std::endl;
+                msg << SERVER_MSG_MARKER << DELIMITER << self->socket.remote_endpoint() << " was disconnected" << std::endl;
                 std::cout << msg.str();
                 self->message_handler(msg.str(), self->getId());
                 self->disconnect_handler();
@@ -38,14 +38,14 @@ void Session::receive(){
             std::size_t bytes_transferred) {
             if (error){
                 std::stringstream msg;
-                msg << self->socket.remote_endpoint() << " was disconnected" << std::endl;
+                msg << SERVER_MSG_MARKER << DELIMITER << self->socket.remote_endpoint() << " was disconnected" << std::endl;
                 std::cout << msg.str();
                 self->message_handler(msg.str(), self->getId());
                 self->disconnect_handler();
                 return;
             }
             std::stringstream message;
-            message << self->socket.remote_endpoint() << ": " << std::istream(&self->streambuf).rdbuf();
+            message << USER_MSG_MARKER << DELIMITER << self->socket.remote_endpoint() << ": " << std::istream(&self->streambuf).rdbuf();
             self->message_handler(message.str(), self->getId());
             self->receive();
         });
@@ -54,6 +54,6 @@ void Session::start(std::function<void(std::string, uint32_t)>&& on_message,
                 std::function<void()>&& on_disconnect) {
     this->message_handler = on_message;
     this->disconnect_handler = on_disconnect;
-    this->send("Welcome to chat\n\r");
+    this->send(SERVER_MSG_MARKER + DELIMITER + "Welcome to chat\n\r");
     this->receive();
 }
