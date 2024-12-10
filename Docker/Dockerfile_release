@@ -1,0 +1,11 @@
+FROM ghcr.io/dmirtydmirty/boost1-86-0:latest
+
+ARG BINARY_PATH
+
+EXPOSE 15001
+
+WORKDIR /home/root/
+
+COPY ${BINARY_PATH} /home/root/
+
+CMD /home/root/ChatServer
