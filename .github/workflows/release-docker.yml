@@ -34,7 +34,7 @@ jobs:
           ls
           mkdir -p art
           cp ${{ github.workspace }}/build/ChatServer  art/
-          cp ${{ github.workspace }}/Docker/Dockerfile_release  art/
+          cp Docker/Dockerfile_release  art/
 
     - name: Browse_files
       run: ls -a ${{ github.workspace }}
