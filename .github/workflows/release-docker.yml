@@ -7,7 +7,7 @@ on:
 env:
   BUILD_TYPE: Release
   REGISTRY: ghcr.io
-  IMAHE_NAME: dmirtydmirty/govnochat
+  IMAGE_NAME: dmirtydmirty/govnochat
 
 
 jobs:
@@ -68,11 +68,11 @@ jobs:
           password: ${{ secrets.TOKEN }}
 
     - name: build-container
-      run: docker build -t ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }} -f ${{ github.workspace }}/art/Dockerfile_release
+      run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} -f ${{ github.workspace }}/art/Dockerfile_release
          --build-arg BINARY_PATH=${{ github.workspace }}/art/build/ChatServer  ${{ github.workspace }}
 
     - name: Push container
-      run: docker push ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}
+      run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
 
 
  
