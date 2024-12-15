@@ -23,12 +23,10 @@ jobs:
     - name: Configure CMake
       run: |
         cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
-        ls -a
   
     - name: Build
       run: |
         cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
-        ls -a
 
     - name: Create artifact
       run: |
@@ -74,6 +72,7 @@ jobs:
            cd ${{ github.workspace }}
            chmod +x ChatServer
            docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} -f Dockerfile_release --build-arg BINARY_PATH=ChatServer  .
+           docker tag {{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} {{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
     - name: Push container
       run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
@@ -99,9 +98,6 @@ jobs:
             CONTAINER_NAME=GovnoChatServer
             LOG_FILE=govnochat.log" > .ini
 
-            ls
-            cat .ini
-
     - name: Pack scripts into archive
       run: |
             mkdir release-${{ github.ref_name }}
@@ -111,14 +107,8 @@ jobs:
             cp stop.*   release-${{ github.ref_name }}
             cp log.*    release-${{ github.ref_name }}
 
-
-            echo "ls release-${{ github.ref_name }}"
-            ls release-${{ github.ref_name }}
-
             zip -r release-${{ github.ref_name }}.zip release-${{ github.ref_name }}
 
-            echo "ls"
-            ls
 
 
     - name: Create Release
@@ -142,7 +132,3 @@ jobs:
         asset_path: release-${{ github.ref_name }}.zip
         asset_name: release-${{ github.ref_name }}.zip
         asset_content_type: application/zip
-
-
-
- 
