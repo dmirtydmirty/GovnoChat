@@ -115,7 +115,7 @@ jobs:
             echo "ls release-${{ github.ref_name }}"
             ls release-${{ github.ref_name }}
 
-            zip release-${{ github.ref_name }}.zip release-${{ github.ref_name }}
+            zip -r release-${{ github.ref_name }}.zip release-${{ github.ref_name }}
 
             echo "ls"
             ls
