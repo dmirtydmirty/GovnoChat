@@ -35,6 +35,7 @@ jobs:
           ls
           mkdir -p art
           cp ${{ github.workspace }}/build/ChatServer  art/
+          cp Scripts/*  art/
           cp Docker/Dockerfile_release  art/
 
     - name: Browse_files
@@ -76,6 +77,69 @@ jobs:
 
     - name: Push container
       run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+
+
+  create-release:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+          name: build-artifact
+          path: ${{ github.workspace }}
+
+    - name: Fill config
+      run: |
+            echo "[Settings]
+            VERSION=${{ github.ref_name }}
+            PORT=15001
+            CONTAINER_NAME=GovnoChatServer
+            LOG_FILE=govnochat.log" > .ini
+
+            ls
+            cat .ini
+
+    - name: Pack scripts into archive
+      run: |
+            mkdir release-${{ github.ref_name }}
+            cp .ini release-${{ github.ref_name }}
+
+            cp start.*  release-${{ github.ref_name }}
+            cp stop.*   release-${{ github.ref_name }}
+            cp log.*    release-${{ github.ref_name }}
+
+            ls release-${{ github.ref_name }}
+
+            zip release-${{ github.ref_name }}.zip release-${{ github.ref_name }}
+
+            ls
+
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref_name }}
+        body: This is a release build.
+        draft: false
+        prerelease: false
+    
+    - name: Upload artifact to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: release-${{ github.ref_name }}.zip
+        asset_name: release-${{ github.ref_name }}.zip
+        asset_content_type: application/zip
+
 
 
  
