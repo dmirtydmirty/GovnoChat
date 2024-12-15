@@ -71,8 +71,7 @@ jobs:
       run: |
            ls ${{ github.workspace }}
            cd ${{ github.workspace }}
-           docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} -f Dockerfile_release
-           --build-arg BINARY_PATH=ChatServer  .
+           docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} -f Dockerfile_release --build-arg BINARY_PATH=ChatServer  .
 
     - name: Push container
       run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
