@@ -102,14 +102,14 @@ jobs:
 
     - name: Pack scripts into archive
       run: |
-            mkdir release-${{ github.ref_name }}
-            cp .ini release-${{ github.ref_name }}
+            mkdir GovnoChatServer-${{ github.ref_name }}
+            cp .ini GovnoChatServer-${{ github.ref_name }}
 
-            cp start.*  release-${{ github.ref_name }}
-            cp stop.*   release-${{ github.ref_name }}
-            cp log.*    release-${{ github.ref_name }}
+            cp start.*  GovnoChatServer-${{ github.ref_name }}
+            cp stop.*   GovnoChatServer-${{ github.ref_name }}
+            cp log.*    GovnoChatServer-${{ github.ref_name }}
 
-            zip -r GovnoChatServer-${{ github.ref_name }}.zip release-${{ github.ref_name }}
+            zip -r GovnoChatServer-${{ github.ref_name }}.zip GovnoChatServer-${{ github.ref_name }}
 
 
 
