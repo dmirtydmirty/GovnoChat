@@ -81,7 +81,7 @@ jobs:
 
 
   create-release:
-    needs: build
+    needs: build-and-push-container
     runs-on: ubuntu-latest
     
     steps:
