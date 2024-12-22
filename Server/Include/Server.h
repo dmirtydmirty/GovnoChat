@@ -1,5 +1,5 @@
-#ifndef TCP_SERVER
-#define TCP_SERVER
+#ifndef SERVER
+#define SERVER
 
 #include <boost/asio.hpp>
 #include <iostream>
@@ -9,9 +9,9 @@
 
 #include "Session.h"
 
-class TCPServer {
+class Server {
 public:
-    TCPServer(boost::asio::io_context& io_context, std::uint16_t port);
+    Server(boost::asio::io_context& io_context, std::uint16_t port);
     void start();
     void stop();
     void deleteSessionById(uint32_t id);

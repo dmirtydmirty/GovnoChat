@@ -10,5 +10,5 @@ target_link_directories(ChatServer PRIVATE
                             Server/Inculude
                             )
 target_link_libraries(ChatServer PRIVATE
-                            tcp_server
+                            server
                             )
