@@ -14,9 +14,10 @@ void Acceptor::start_accept(){
 }
 
 void Acceptor::async_accept(){
-    boost::asio::ip::tcp::socket sock(m_ios);
-    m_acceptor.async_accept(sock, [this, &sock](boost::system::error_code code){
-        this->on_accept(code, sock);
+    std::shared_ptr<boost::asio::ip::tcp::socket>
+			sock(new boost::asio::ip::tcp::socket(m_ios)); 
+    m_acceptor.async_accept(*sock, [this, sock](boost::system::error_code code){
+        this->on_accept(code, *sock);
     });
 }
 
