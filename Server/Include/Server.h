@@ -8,22 +8,24 @@
 #include <map>
 
 #include "Session.h"
+#include "../../Protocol/Include/Protocol.h"
+#include "ChatService.h"
+#include "Acceptor.h"
 
 class Server {
 public:
     Server(boost::asio::io_context& io_context, std::uint16_t port);
     void start();
     void stop();
-    void deleteSessionById(uint32_t id);
 private:
-    void asyncAccept();
-    void createSession();
-    void post(std::string msg);
-    void sendAll(std::string msg, uint32_t senderId);
+    void handle_message();
+    void handle_accept(boost::asio::ip::tcp::socket&& sock);
+
     boost::asio::io_context& io_context;
-    boost::asio::ip::tcp::acceptor acceptor;
-    std::optional<boost::asio::ip::tcp::socket> socket;
-    std::map<uint32_t, std::shared_ptr<Session>> clients;
+    ChatService service;
+    const uint32_t SERVER_ID = 0;
+    std::shared_ptr<Protocol> protocol;
+    std::unique_ptr<Acceptor> acceptor;
 };
 
 #endif

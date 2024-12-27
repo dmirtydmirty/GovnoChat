@@ -9,9 +9,9 @@ class Protocol{
 public:
     Protocol() = default;
 
-    std::string build_message(Message msg);
+    std::string pack_message(Message msg);
 
-    Message parse_message(std::string msg);
+    Message create_message(std::string msg, u_int32_t sender_id = 0);
 private:
     static inline std::string USER_MSG_MARKER   = "USERMSG";
     static inline std::string SERVER_MSG_MARKER = "SERVERMSG";

@@ -10,6 +10,7 @@ find_package(Boost REQUIRED)
 set(SOURCES Source/Server.cpp
             Source/Session.cpp
             Source/Acceptor.cpp
+            Source/ChatService.cpp
             )
 
 add_library(server ${SOURCES})

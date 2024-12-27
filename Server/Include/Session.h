@@ -4,9 +4,9 @@
 #include <boost/asio.hpp>
 #include <memory>
 
-class Session: public std::enable_shared_from_this<Session> {
+class Session{
 public:
-    Session(boost::asio::ip::tcp::socket&& socket);
+    Session(boost::asio::ip::tcp::socket socket);
     ~Session();
     void send(std::string msg);
     void receive();
@@ -14,9 +14,6 @@ public:
                 std::function<void()>&& on_disconnect);
     uint32_t getId() const {return id;}
     
-    static inline std::string USER_MSG_MARKER   = "USERMSG";
-    static inline std::string SERVER_MSG_MARKER = "SERVERMSG";
-    static inline std::string DELIMITER         = "///";  
 private:
     static inline uint32_t id_ctr{0};
     uint32_t id;

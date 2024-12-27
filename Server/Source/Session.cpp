@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-Session::Session(boost::asio::ip::tcp::socket&& socket) :
+Session::Session(boost::asio::ip::tcp::socket socket) :
         socket(std::move(socket)) {
             this->id = id_ctr++;
 }
@@ -11,12 +11,12 @@ Session::Session(boost::asio::ip::tcp::socket&& socket) :
 void Session::send(std::string msg){
     boost::asio::async_write(
         socket, boost::asio::buffer(msg),
-        [self = shared_from_this()](
+        [self = this](
             boost::system::error_code error,
             size_t bytes_transferred){
             if (error){
                 std::stringstream msg;
-                msg << SERVER_MSG_MARKER << DELIMITER << self->socket.remote_endpoint() << " was disconnected" << std::endl;
+                // msg << SERVER_MSG_MARKER << DELIMITER << self->socket.remote_endpoint() << " was disconnected" << std::endl;
                 std::cout << msg.str();
                 self->message_handler(msg.str(), self->getId());
                 self->disconnect_handler();
@@ -33,19 +33,19 @@ void Session::receive(){
         socket,
         streambuf,
         '\n',
-        [self = shared_from_this()](
+        [self = this](
             boost::system::error_code error,
             std::size_t bytes_transferred) {
             if (error){
                 std::stringstream msg;
-                msg << SERVER_MSG_MARKER << DELIMITER << self->socket.remote_endpoint() << " was disconnected" << std::endl;
+                // msg << SERVER_MSG_MARKER << DELIMITER << self->socket.remote_endpoint() << " was disconnected" << std::endl;
                 std::cout << msg.str();
                 self->message_handler(msg.str(), self->getId());
                 self->disconnect_handler();
                 return;
             }
             std::stringstream message;
-            message << USER_MSG_MARKER << DELIMITER << self->socket.remote_endpoint() << ": " << std::istream(&self->streambuf).rdbuf();
+            // message << USER_MSG_MARKER << DELIMITER << self->socket.remote_endpoint() << ": " << std::istream(&self->streambuf).rdbuf();
             self->message_handler(message.str(), self->getId());
             self->receive();
         });
@@ -54,6 +54,6 @@ void Session::start(std::function<void(std::string, uint32_t)>&& on_message,
                 std::function<void()>&& on_disconnect) {
     this->message_handler = on_message;
     this->disconnect_handler = on_disconnect;
-    this->send(SERVER_MSG_MARKER + DELIMITER + "Welcome to chat\n\r");
+    // this->send(SERVER_MSG_MARKER + DELIMITER + "Welcome to chat\n\r");
     this->receive();
 }
