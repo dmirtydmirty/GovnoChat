@@ -9,7 +9,7 @@ class Protocol{
 public:
     Protocol() = default;
 
-    std::string pack_message(Message msg);
+    std::string pack_message(const Message&  msg);
 
     Message create_message(std::string msg, u_int32_t sender_id = 0);
 private:

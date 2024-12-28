@@ -14,7 +14,6 @@ void Session::send(std::string&& msg){
         [self = this, &msg](
             boost::system::error_code error,
             size_t bytes_transferred){
-            std::cout << "Send " << msg << " to user" << self->getId() << std::endl;  
             if (error){
                 std::stringstream msg;
                 self->message_handler(msg.str(), self->getId());
@@ -35,20 +34,21 @@ void Session::receive(){
         [self = this](
             boost::system::error_code error,
             std::size_t bytes_transferred) {
-            std::cout << "New message from user" << self->getId() << std::endl;
             if (error){
                 std::stringstream msg;
                 std::cout << msg.str();
-                self->message_handler(msg.str(), self->getId());
+                // self->message_handler(msg.str(), self->getId());
                 self->disconnect_handler();
                 return;
             }
+            std::cout << "New message from user" << self->getId() << std::endl;
             std::stringstream message;
+            message << std::istream(&self->streambuf).rdbuf();
             self->message_handler(std::move(message.str()), self->getId());
             self->receive();
         });
 }
-void Session::start(std::function<void(std::string, uint32_t)>&& on_message,
+void Session::start(std::function<void(const std::string&, uint32_t)>&& on_message,
                 std::function<void()>&& on_disconnect) {
     this->message_handler = on_message;
     this->disconnect_handler = on_disconnect;

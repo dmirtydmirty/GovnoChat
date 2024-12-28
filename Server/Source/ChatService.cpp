@@ -13,3 +13,9 @@ void ChatService::send_message(const Message& msg){
             user.second->send(m_protocol->pack_message(msg));
      }
 }
+
+
+void ChatService::delete_user(uint32_t id){
+    m_users.erase(id);
+    std::cout << "User with id: " << id << " has been deleted" << std::endl;
+}

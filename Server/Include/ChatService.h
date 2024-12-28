@@ -12,6 +12,7 @@ class ChatService
 public:
     ChatService(std::shared_ptr<Protocol> protocol): m_protocol(protocol){}
     void add_user(std::shared_ptr<Session> new_user);
+    void delete_user(uint32_t id);
     void send_message(const Message& msg);
 
 private:

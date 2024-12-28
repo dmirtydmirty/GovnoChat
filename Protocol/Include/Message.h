@@ -12,8 +12,10 @@ enum MessageType{
 
 class Message{
 public:
-    Message(std::string content, u_int32_t sender, MessageType type):
-        m_content(content), m_sender(sender), m_type(type){};
+    Message(const std::string& content, u_int32_t sender, MessageType type):
+        m_content(content), m_sender(sender), m_type(type){
+            int a =6;
+        };
     u_int32_t get_user_id() const {return m_sender;}
 private:
     std::string m_content;

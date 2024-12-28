@@ -26,21 +26,22 @@ void Server::stop(){
     io_context.stop();
 }
 
-void Server::handle_message(std::string content, uint32_t sender_id){
+void Server::handle_message(const std::string& content, uint32_t sender_id){
     std::cout <<  "handling message from user" << sender_id << std::endl;
     Message msg = protocol->create_message(content, sender_id);
     service.send_message(msg);
 }
 
 void Server::handle_disconnect(uint32_t sender_id){
-
+    service.delete_user(sender_id);
+    std::string msg = "User" + std::to_string(sender_id) + " disconnected\n\r";
+    service.send_message(Message(msg, SERVER_ID, MessageType::FROM_SERVER));
 }
 
 void Server::handle_accept(boost::asio::ip::tcp::socket&& sock){
     auto new_session = std::make_shared<Session>(std::move(sock));
-    std::stringstream msg;
-    msg << "User"+new_session->getId() << " is connacted\n\r";
-    service.send_message(Message(msg.str(), SERVER_ID, MessageType::FROM_SERVER));
+    std::string msg = "User" + std::to_string(new_session->getId()) + " is connected\n\r";
+    service.send_message(Message(msg, SERVER_ID, MessageType::FROM_SERVER));
     new_session->start(std::bind(&Server::handle_message, this, std::placeholders::_1, std::placeholders::_2),
                         std::bind(&Server::handle_disconnect, this, new_session->getId()));
     service.add_user(std::move(new_session));
