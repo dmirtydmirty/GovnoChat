@@ -1,4 +1,5 @@
 #include "../Include/Protocol.h"
+#include <iostream>
 
 std::string Protocol::pack_message(const Message& msg){
     std::string msg_packed;
@@ -6,10 +7,12 @@ std::string Protocol::pack_message(const Message& msg){
     {
     case MessageType::FROM_USER:
         msg_packed = USER_MSG_MARKER + DELIMITER + "User" + std::to_string(msg.m_sender) + ":" + msg.m_content;
+        std::cout << msg_packed;
         break;
     
     case MessageType::FROM_SERVER:
         msg_packed = SERVER_MSG_MARKER + DELIMITER + msg.m_content;
+        std::cout << msg_packed;
         break;
     }
     return msg_packed;

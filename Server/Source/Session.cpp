@@ -3,12 +3,15 @@
 #include <iostream>
 
 
-Session::Session(boost::asio::ip::tcp::socket socket) :
-        socket(std::move(socket)) {
+Session::Session(boost::asio::ip::tcp::socket socket, std::function<void(const std::string&, uint32_t)>&& on_message,
+                std::function<void(uint32_t)>&& on_disconnect) :
+        socket(std::move(socket)),
+        message_handler(on_message),
+        disconnect_handler(on_disconnect) {
             this->id = id_ctr++;
 }
 
-void Session::send(std::string&& msg){
+void Session::send(const std::string& msg){
     boost::asio::async_write(
         socket, boost::asio::buffer(msg),
         [self = this, &msg](
@@ -16,8 +19,8 @@ void Session::send(std::string&& msg){
             size_t bytes_transferred){
             if (error){
                 std::stringstream msg;
-                self->message_handler(msg.str(), self->getId());
-                self->disconnect_handler();
+                self->message_handler(msg.str(), self->get_id());
+                self->disconnect_handler(self->get_id());
         }
     });
 }
@@ -37,20 +40,17 @@ void Session::receive(){
             if (error){
                 std::stringstream msg;
                 std::cout << msg.str();
-                // self->message_handler(msg.str(), self->getId());
-                self->disconnect_handler();
+                self->disconnect_handler(self->get_id());
                 return;
             }
-            std::cout << "New message from user" << self->getId() << std::endl;
+            std::cout << "New message from user" << self->get_id() << std::endl;
             std::stringstream message;
             message << std::istream(&self->streambuf).rdbuf();
-            self->message_handler(std::move(message.str()), self->getId());
+            self->message_handler(std::move(message.str()), self->get_id());
             self->receive();
         });
 }
-void Session::start(std::function<void(const std::string&, uint32_t)>&& on_message,
-                std::function<void()>&& on_disconnect) {
-    this->message_handler = on_message;
-    this->disconnect_handler = on_disconnect;
+
+void Session::start() {
     this->receive();
 }

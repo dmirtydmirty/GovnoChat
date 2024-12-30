@@ -2,9 +2,9 @@
 #include <iostream>
 
 void ChatService::add_user(std::shared_ptr<Session> new_user){
-    uint32_t id = new_user->getId();
+    uint32_t id = new_user->get_id();
     m_users.emplace(id, new_user);
-    std::cout << "Registred new user id: " << new_user->getId() << std::endl;
+    std::cout << "Registred new user id: " << new_user->get_id() << std::endl;
 }
 
 void ChatService::send_message(const Message& msg){

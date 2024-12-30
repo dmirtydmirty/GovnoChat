@@ -39,11 +39,12 @@ void Server::handle_disconnect(uint32_t sender_id){
 }
 
 void Server::handle_accept(boost::asio::ip::tcp::socket&& sock){
-    auto new_session = std::make_shared<Session>(std::move(sock));
-    std::string msg = "User" + std::to_string(new_session->getId()) + " is connected\n\r";
+    auto new_session = std::make_shared<Session>(std::move(sock),
+                std::bind(&Server::handle_message,      this, std::placeholders::_1, std::placeholders::_2),
+                std::bind(&Server::handle_disconnect,   this, std::placeholders::_1));
+    std::string msg = "User" + std::to_string(new_session->get_id()) + " is connected\n\r";
     service.send_message(Message(msg, SERVER_ID, MessageType::FROM_SERVER));
-    new_session->start(std::bind(&Server::handle_message, this, std::placeholders::_1, std::placeholders::_2),
-                        std::bind(&Server::handle_disconnect, this, new_session->getId()));
+    new_session->start();
     service.add_user(std::move(new_session));
 
 }
