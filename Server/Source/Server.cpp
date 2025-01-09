@@ -26,9 +26,9 @@ void Server::stop(){
     io_context.stop();
 }
 
-void Server::handle_message(const std::string& content, uint32_t sender_id){
+void Server::handle_message(const std::string& raw_message, uint32_t sender_id){
     std::cout <<  "handling message from user" << sender_id << std::endl;
-    Message msg = protocol->create_message(content, sender_id);
+    Message msg = protocol->create_message(raw_message, sender_id);
     service.send_message(msg);
 }
 

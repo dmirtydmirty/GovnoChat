@@ -18,7 +18,7 @@ public:
     void start();
     void stop();
 private:
-    void handle_message(const std::string& content, uint32_t sender_id);
+    void handle_message(const std::string& raw_message, uint32_t sender_id);
     void handle_disconnect(uint32_t sender_id);
     void handle_accept(boost::asio::ip::tcp::socket&& sock);
 
