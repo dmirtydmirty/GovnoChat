@@ -27,15 +27,35 @@ void Server::stop(){
 }
 
 void Server::handle_message(const std::string& raw_message, uint32_t sender_id){
-    std::cout <<  "handling message from user" << sender_id << std::endl;
-    Message msg = protocol->create_message(raw_message, sender_id);
-    service.send_message(msg);
+    std::cout << "Server::handle_message() handling message from user" << sender_id << std::endl;
+    try{
+        Message msg = protocol->parse_message(raw_message);
+
+        MessageType type = msg.get_type();
+        switch (type)
+        {
+        case MessageType::USER_MESSAGE:
+            service.send_message(msg);
+            break;
+
+        case MessageType::USER_ID_REQUEST:
+            service.send_use_id_responce(msg);
+            break;
+        
+        default:
+            break;
+        }
+        
+    }
+    catch(const std::runtime_error& err){
+        std::cerr << "Server::handle_message() Handlig error: " << err.what() << std::endl;
+    }
 }
 
 void Server::handle_disconnect(uint32_t sender_id){
     service.delete_user(sender_id);
     std::string msg = "User" + std::to_string(sender_id) + " disconnected\n\r";
-    service.send_message(Message(msg, SERVER_ID, MessageType::FROM_SERVER));
+    service.send_message(Message(msg, SERVER_ID, MessageType::SERVER_STATUS_MESSAGE));
 }
 
 void Server::handle_accept(boost::asio::ip::tcp::socket&& sock){
@@ -43,7 +63,7 @@ void Server::handle_accept(boost::asio::ip::tcp::socket&& sock){
                 std::bind(&Server::handle_message,      this, std::placeholders::_1, std::placeholders::_2),
                 std::bind(&Server::handle_disconnect,   this, std::placeholders::_1));
     std::string msg = "User" + std::to_string(new_session->get_id()) + " is connected\n\r";
-    service.send_message(Message(msg, SERVER_ID, MessageType::FROM_SERVER));
+    
     new_session->start();
     service.add_user(std::move(new_session));
 

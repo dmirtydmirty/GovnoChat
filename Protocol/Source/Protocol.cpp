@@ -4,23 +4,30 @@
 std::string Protocol::pack_message(const Message& msg){
     std::stringstream msg_packed;
     nlohmann::json msg_json;
-    switch (msg.m_type)
-    {
-    case MessageType::FROM_USER:
-        msg_json["Type"] = USER_MSG_MARKER;
-        msg_json["Content"] = "User" + std::to_string(msg.m_sender) + ": " + msg.m_content;
-        msg_packed << msg_json;
-        break;
-    case MessageType::FROM_SERVER:
-        msg_json["Type"] = SERVER_MSG_MARKER;
-        msg_json["Content"] = msg.m_content;
-        msg_packed << msg_json;
 
-        break;
-    }
+    msg_json["Type"] = static_cast<uint8_t>(msg.m_type);
+    msg_json["Sender"] = msg.m_sender;
+    msg_json["Content"] = msg.m_content;
+    msg_packed << msg_json;
+
     return msg_packed.str();
 }
 
-Message Protocol::create_message(std::string msg, u_int32_t sender_id){
-    return Message(msg, sender_id, sender_id == 0 ? MessageType::FROM_SERVER : MessageType::FROM_USER);
-} 
+
+Message Protocol::parse_message(std::string raw_message){
+    std::string content{};
+    uint32_t sender{};
+    MessageType type{};
+
+    try {
+        nlohmann::json msg_json{nlohmann::json::parse(raw_message)};
+        content = msg_json["Content"];
+        sender = msg_json["Sender"];
+        type = msg_json["Type"];
+    }
+    catch(nlohmann::json_abi_v3_11_2::detail::parse_error& err){
+        throw std::runtime_error("Invalid message format");
+    }
+    return Message(content, sender, type); 
+}
+    
