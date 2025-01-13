@@ -19,13 +19,14 @@ Message Protocol::parse_message(std::string raw_message){
     uint32_t sender{};
     MessageType type{};
 
+ 
     try {
         nlohmann::json msg_json{nlohmann::json::parse(raw_message)};
         content = msg_json["Content"];
         sender = msg_json["Sender"];
         type = msg_json["Type"];
     }
-    catch(nlohmann::json_abi_v3_11_2::detail::parse_error& err){
+    catch(nlohmann::json::parse_error& err){
         throw std::runtime_error("Invalid message format");
     }
     return Message(content, sender, type); 
