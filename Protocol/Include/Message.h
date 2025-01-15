@@ -5,7 +5,7 @@
 
 #include "Protocol.h"
 
-enum MessageType{
+enum MessageType : uint8_t{
     USER_MESSAGE,
     USER_ID_REQUEST,
 

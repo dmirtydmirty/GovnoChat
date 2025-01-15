@@ -1,6 +1,8 @@
 #include "../Include/Protocol.h"
 #include <iostream>
 
+using namespace nlohmann::literals;
+
 std::string Protocol::pack_message(const Message& msg){
     std::stringstream msg_packed;
     nlohmann::json msg_json;
@@ -14,21 +16,21 @@ std::string Protocol::pack_message(const Message& msg){
 }
 
 
-Message Protocol::parse_message(std::string raw_message){
+Message Protocol::parse_message(const std::string& raw_message){
     std::string content{};
     uint32_t sender{};
     MessageType type{};
-
  
     try {
-        nlohmann::json msg_json{nlohmann::json::parse(raw_message)};
-        content = msg_json["Content"];
-        sender = msg_json["Sender"];
-        type = msg_json["Type"];
+        nlohmann::json msg_json = nlohmann::json::parse(raw_message);
+    
+        content = msg_json["Content"].get<std::string>();
+        sender = msg_json["Sender"].get<uint32_t>();
+        type = static_cast<MessageType>(msg_json["Type"].get<uint8_t>());
     }
     catch(nlohmann::json::parse_error& err){
         throw std::runtime_error("Invalid message format");
     }
-    return Message(content, sender, type); 
+    return Message(content, sender, MessageType::SERVER_STATUS_MESSAGE); 
 }
     

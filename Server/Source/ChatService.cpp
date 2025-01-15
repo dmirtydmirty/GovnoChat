@@ -21,6 +21,10 @@ void ChatService::delete_user(uint32_t id){
 }
 
 void ChatService::send_use_id_responce(const Message& msg){
-    auto response =  m_protocol->pack_message(Message(std::to_string(msg.get_sender()), 0, MessageType::USER_ID_RESPONSE));
-    m_users[msg.get_sender()]->send(response);
+    auto response =  Message(std::to_string(msg.get_sender()), 0, MessageType::USER_ID_RESPONSE);
+    for(const auto& user: m_users){
+        if (user.first == msg.get_sender()) // откуда там правильный id если он взят из сообщения
+        // а юзер его не знает, надо отправлять эту фигню сразу как юзер подключается, пока у нас есть прямой доступ к сессии, не по id
+            user.second->send(m_protocol->pack_message(response));
+     }
 }

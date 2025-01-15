@@ -14,12 +14,12 @@ Session::Session(boost::asio::ip::tcp::socket socket, std::function<void(const s
 void Session::send(const std::string& msg){
     boost::asio::async_write(
         socket, boost::asio::buffer(msg),
-        [self = this, &msg](
+        [self = this](
             boost::system::error_code error,
             size_t bytes_transferred){
             if (error){
-                std::stringstream msg;
-                self->message_handler(msg.str(), self->get_id());
+                // std::stringstream msg;
+                // self->message_handler(msg.str(), self->get_id());
                 self->disconnect_handler(self->get_id());
         }
     });

@@ -12,7 +12,7 @@ public:
 
     std::string pack_message(const Message&  msg);
 
-    Message parse_message(std::string raw_message);
+    Message parse_message(const std::string& raw_message);
 
 };
 

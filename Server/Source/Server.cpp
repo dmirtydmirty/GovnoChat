@@ -39,10 +39,6 @@ void Server::handle_message(const std::string& raw_message, uint32_t sender_id){
             service.send_message(msg);
             break;
 
-        case MessageType::USER_ID_REQUEST:
-            service.send_use_id_responce(msg);
-            break;
-        
         default:
             break;
         }
