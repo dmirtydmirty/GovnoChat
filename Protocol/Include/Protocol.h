@@ -8,6 +8,7 @@
 
 class Protocol{
 public:
+    static inline const uint32_t SERVER_ID = 0;
     Protocol() = default;
 
     std::string pack_message(const Message&  msg);

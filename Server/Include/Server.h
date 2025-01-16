@@ -24,7 +24,6 @@ private:
 
     boost::asio::io_context& io_context;
     ChatService service;
-    const uint32_t SERVER_ID = 0;
     std::shared_ptr<Protocol> protocol;
     std::unique_ptr<Acceptor> acceptor;
 };

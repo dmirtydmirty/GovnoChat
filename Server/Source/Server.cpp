@@ -52,7 +52,7 @@ void Server::handle_message(const std::string& raw_message, uint32_t sender_id){
 void Server::handle_disconnect(uint32_t sender_id){
     service.delete_user(sender_id);
     std::string msg = "User" + std::to_string(sender_id) + " disconnected\n\r";
-    service.send_message(Message(msg, SERVER_ID, MessageType::SERVER_STATUS_MESSAGE));
+    service.send_message(Message(msg, Protocol::SERVER_ID, MessageType::SERVER_STATUS_MESSAGE));
 }
 
 void Server::handle_accept(boost::asio::ip::tcp::socket&& sock){
