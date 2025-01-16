@@ -7,9 +7,8 @@
 
 enum MessageType : uint8_t{
     USER_MESSAGE,
-    USER_ID_REQUEST,
 
-    USER_ID_RESPONSE,
+    USER_ID_NOTIFICATION,
     SERVER_STATUS_MESSAGE,
 };
 
