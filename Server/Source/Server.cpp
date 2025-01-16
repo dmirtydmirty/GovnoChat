@@ -60,7 +60,7 @@ void Server::handle_accept(boost::asio::ip::tcp::socket&& sock){
                 std::bind(&Server::handle_message,      this, std::placeholders::_1, std::placeholders::_2),
                 std::bind(&Server::handle_disconnect,   this, std::placeholders::_1));
     std::string msg = "User" + std::to_string(new_session->get_id()) + " is connected\n\r";
-    
+    service.send_message(Message(msg, Protocol::SERVER_ID, MessageType::SERVER_STATUS_MESSAGE));
     new_session->start();
     service.add_user(std::move(new_session));
 
