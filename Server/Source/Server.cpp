@@ -35,11 +35,8 @@ void Server::handle_message(const std::string& raw_message, uint32_t sender_id){
         MessageType type = msg.get_type();
         switch (type)
         {
-        case MessageType::USER_MESSAGE:
-            service.send_message(msg);
-            break;
-
         default:
+            service.send_message(msg);
             break;
         }
         
@@ -59,7 +56,7 @@ void Server::handle_accept(boost::asio::ip::tcp::socket&& sock){
     auto new_session = std::make_shared<Session>(std::move(sock),
                 std::bind(&Server::handle_message,      this, std::placeholders::_1, std::placeholders::_2),
                 std::bind(&Server::handle_disconnect,   this, std::placeholders::_1));
-    std::string msg = "User" + std::to_string(new_session->get_id()) + " is connected\n\r";
+    std::string msg = "User" + std::to_string(new_session->get_id()) + " is connected";
     service.send_message(Message(msg, Protocol::SERVER_ID, MessageType::SERVER_STATUS_MESSAGE));
     new_session->start();
     service.add_user(std::move(new_session));

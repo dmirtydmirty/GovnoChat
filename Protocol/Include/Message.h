@@ -6,10 +6,10 @@
 #include "Protocol.h"
 
 enum MessageType : uint8_t{
-    USER_MESSAGE,
+    USER_MESSAGE=0,
 
-    USER_ID_NOTIFICATION,
-    SERVER_STATUS_MESSAGE,
+    USER_ID_NOTIFICATION=1,
+    SERVER_STATUS_MESSAGE=2,
 };
 
 class Message{

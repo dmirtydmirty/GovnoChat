@@ -31,6 +31,6 @@ Message Protocol::parse_message(const std::string& raw_message){
     catch(nlohmann::json::parse_error& err){
         throw std::runtime_error("Invalid message format");
     }
-    return Message(content, sender, MessageType::SERVER_STATUS_MESSAGE); 
+    return Message(content, sender, type); 
 }
     
