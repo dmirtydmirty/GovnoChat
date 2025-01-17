@@ -28,18 +28,15 @@ void Server::stop(){
 
 void Server::handle_message(const std::string& raw_message, uint32_t sender_id){
     std::cout << "Server::handle_message() handling message from user" << sender_id << std::endl;
-    std::cout << raw_message;
     try{
         Message msg = protocol->parse_message(raw_message);
 
         MessageType type = msg.get_type();
-        switch (type)
-        {
-        default:
-            service.send_message(msg);
+        switch (type) {
+            case MessageType::USER_MESSAGE:
+                service.send_message(msg);
             break;
         }
-        
     }
     catch(const std::runtime_error& err){
         std::cerr << "Server::handle_message() Handlig error: " << err.what() << std::endl;
