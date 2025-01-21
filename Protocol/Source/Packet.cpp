@@ -1,5 +1,7 @@
 #include "../Include/Packet.h"
 #include "../Include/UserMessage.h"
+#include "../Include/UserIDNotification.h"
+#include "../Include/ServerStatusMessage.h"
 
 Packet::Packet(const std::string& raw_packet){
     if (nlohmann::json::accept(raw_packet))
@@ -24,7 +26,12 @@ Packet::Packet(const std::string& raw_packet){
     case MessageType::USER_MESSAGE :
         this->m_message = std::make_unique<UserMessage>(packet_json["Sender"].template get<UserMessage>());
         break;
-    
+    case MessageType::USER_ID_NOTIFICATION :
+        this->m_message = std::make_unique<UserIDNotification>(packet_json["Sender"].template get<UserIDNotification>());
+        break;
+    case MessageType::SERVER_STATUS_MESSAGE :
+        this->m_message = std::make_unique<ServerStatusMessage>(packet_json["Sender"].template get<ServerStatusMessage>());
+        break;   
     default:
         throw std::runtime_error("Unknown message type");
         break;
@@ -38,12 +45,17 @@ std::string Packet::pack(){
     packet_json["Sender"] = this->m_sender;
     packet_json["Type"] = static_cast<uint8_t>(this->m_type);
 
-    auto ptr = dynamic_cast<UserMessage*>(m_message.get());
 
     switch (this->m_type)
     {
     case MessageType::USER_MESSAGE :
-        packet_json["Message"] = nlohmann::json(); 
+        packet_json["Message"] = nlohmann::json(*dynamic_cast<UserMessage*>(m_message.get())); 
+        break;
+    case MessageType::SERVER_STATUS_MESSAGE :
+        packet_json["Message"] = nlohmann::json(*dynamic_cast<ServerStatusMessage*>(m_message.get())); 
+        break;
+    case MessageType::USER_ID_NOTIFICATION :
+        packet_json["Message"] = nlohmann::json(*dynamic_cast<UserIDNotification*>(m_message.get())); 
         break;
     default:
         throw std::runtime_error("Unknown message type");

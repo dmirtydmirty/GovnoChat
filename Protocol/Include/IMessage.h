@@ -2,11 +2,15 @@
 #define IMESSAGE
 
 #include <string>
+#include <any>
 #include <nlohmann/json.hpp>
 
 class IMessage{
 public:
-    IMessage(const std::string& raw_message){}
+    IMessage(){}
+
+    virtual std::any get() const = 0;
+
 };
 
 

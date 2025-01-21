@@ -9,10 +9,13 @@
 class UserMessage :  virtual public IMessage {
 public:
 
-UserMessage(const std::string& content): IMessage(content), m_content(content) {}
+UserMessage(const std::string& content): m_content(content) {}
+
+std::any get() const {return m_content;}
 
 private:
     std::string m_content;
+
 
     friend class nlohmann::adl_serializer<UserMessage>;
 
