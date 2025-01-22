@@ -28,7 +28,7 @@ template <>
 struct adl_serializer<ServerStatusMessage>
 {
     static ServerStatusMessage from_json(const json& j){
-        return {j.at("StatusInfo")};
+        return ServerStatusMessage(j.at("StatusInfo").get<std::string>());
     }
 
     static void to_json(json& j, ServerStatusMessage p)

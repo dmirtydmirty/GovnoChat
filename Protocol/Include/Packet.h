@@ -5,6 +5,9 @@
 #include <memory>
 
 #include "IMessage.h"
+#include "UserMessage.h"
+#include "UserIDNotification.h"
+#include "ServerStatusMessage.h"
 
 enum MessageType : uint8_t{
     USER_MESSAGE=0,
@@ -16,6 +19,7 @@ enum MessageType : uint8_t{
 class Packet{
 public:
     Packet(const std::string& raw_packet);
+    Packet(IMessage&& msg, MessageType type, uint32_t sender);
 
     MessageType get_type() const {return m_type;}
     uint32_t get_sender() const {return m_sender;}

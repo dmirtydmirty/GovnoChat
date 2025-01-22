@@ -8,6 +8,7 @@ set(Boost_USE_STATIC_LIBS   ON)
 find_package(Boost REQUIRED)
 
 set(SOURCES Source/Protocol.cpp
+            Source/Packet.cpp
             )
 
 add_library(protocol ${SOURCES})

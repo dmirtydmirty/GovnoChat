@@ -11,6 +11,7 @@ public:
 
 UserIDNotification(uint32_t id):  m_id(id) {}
 
+
 std::any get() const {return m_id;}
 
 private:
@@ -27,7 +28,7 @@ template <>
 struct adl_serializer<UserIDNotification>
 {
     static UserIDNotification from_json(const json& j){
-        return {j.at("ID")};
+        return UserIDNotification(j.at("ID").get<uint32_t>());
     }
 
     static void to_json(json& j, UserIDNotification p)

@@ -6,6 +6,7 @@
 
 #include "Session.h"
 #include "../../Protocol/Include/Protocol.h"
+#include "../../Protocol/Include/Packet.h"
 
 class ChatService
 {

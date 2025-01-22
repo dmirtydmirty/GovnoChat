@@ -1,7 +1,5 @@
 #include "../Include/Packet.h"
-#include "../Include/UserMessage.h"
-#include "../Include/UserIDNotification.h"
-#include "../Include/ServerStatusMessage.h"
+
 
 Packet::Packet(const std::string& raw_packet){
     if (nlohmann::json::accept(raw_packet))
@@ -39,6 +37,11 @@ Packet::Packet(const std::string& raw_packet){
     
 }
 
+Packet::Packet(IMessage&& msg, MessageType type, uint32_t sender) : 
+            m_type(type),
+            m_sender(sender),
+            m_message(&msg){
+}
 
 std::string Packet::pack(){
     nlohmann::json packet_json;

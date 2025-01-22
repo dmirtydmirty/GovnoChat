@@ -18,7 +18,7 @@ Server::Server(boost::asio::io_context& io_context, std::uint16_t port) try:
         }
 
 void Server::start(){
-    std::cout << "Sarting TCP server " << std::endl; 
+    std::cout << "Starting TCP server " << std::endl; 
     acceptor->start_accept();
 }
 

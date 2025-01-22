@@ -4,6 +4,8 @@
 void ChatService::add_user(std::shared_ptr<Session> new_user){
     uint32_t id = new_user->get_id();
     m_users.emplace(id, new_user);
+    Packet packet(UserIDNotification(id), USER_ID_NOTIFICATION, Protocol::SERVER_ID);
+    std::cout << packet.pack() << std::endl; 
     auto notification = Message(std::to_string(id), Protocol::SERVER_ID, MessageType::USER_ID_NOTIFICATION);
     new_user->send(m_protocol->pack_message(notification));
     std::cout << "Registred new user id: " << id << std::endl;

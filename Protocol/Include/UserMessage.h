@@ -28,7 +28,7 @@ template <>
 struct adl_serializer<UserMessage>
 {
     static UserMessage from_json(const json& j){
-        return {j.at("Content")};
+        return UserMessage(j.at("Content").get<std::string>());
     }
 
     static void to_json(json& j, UserMessage p)
