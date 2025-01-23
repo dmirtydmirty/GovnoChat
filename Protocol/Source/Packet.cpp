@@ -22,13 +22,13 @@ Packet::Packet(const std::string& raw_packet){
     switch (this->m_type)
     {
     case MessageType::USER_MESSAGE :
-        this->m_message = std::make_unique<UserMessage>(packet_json["Sender"].template get<UserMessage>());
+        this->m_message = std::make_shared<UserMessage>(packet_json["Sender"].template get<UserMessage>());
         break;
     case MessageType::USER_ID_NOTIFICATION :
-        this->m_message = std::make_unique<UserIDNotification>(packet_json["Sender"].template get<UserIDNotification>());
+        this->m_message = std::make_shared<UserIDNotification>(packet_json["Sender"].template get<UserIDNotification>());
         break;
     case MessageType::SERVER_STATUS_MESSAGE :
-        this->m_message = std::make_unique<ServerStatusMessage>(packet_json["Sender"].template get<ServerStatusMessage>());
+        this->m_message = std::make_shared<ServerStatusMessage>(packet_json["Sender"].template get<ServerStatusMessage>());
         break;   
     default:
         throw std::runtime_error("Unknown message type");
@@ -37,17 +37,16 @@ Packet::Packet(const std::string& raw_packet){
     
 }
 
-Packet::Packet(IMessage&& msg, MessageType type, uint32_t sender) : 
+Packet::Packet(const std::shared_ptr<IMessage>& msg, MessageType type, uint32_t sender) : 
             m_type(type),
             m_sender(sender),
-            m_message(&msg){
+            m_message(msg){
 }
 
 std::string Packet::pack(){
     nlohmann::json packet_json;
     packet_json["Sender"] = this->m_sender;
     packet_json["Type"] = static_cast<uint8_t>(this->m_type);
-
 
     switch (this->m_type)
     {

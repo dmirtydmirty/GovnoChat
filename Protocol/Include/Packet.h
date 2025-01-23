@@ -19,7 +19,7 @@ enum MessageType : uint8_t{
 class Packet{
 public:
     Packet(const std::string& raw_packet);
-    Packet(IMessage&& msg, MessageType type, uint32_t sender);
+    Packet(const std::shared_ptr<IMessage>& msg, MessageType type, uint32_t sender);
 
     MessageType get_type() const {return m_type;}
     uint32_t get_sender() const {return m_sender;}
@@ -28,7 +28,7 @@ private:
 
     u_int32_t m_sender;
     MessageType m_type;
-    std::unique_ptr<IMessage> m_message;
+    std::shared_ptr<IMessage> m_message;
 
 };
 
