@@ -27,9 +27,7 @@ void Server::stop(){
 
 void Server::handle_message(const std::string& raw_message, uint32_t sender_id){
     std::cout << "Server::handle_message() handling message from user" << sender_id << std::endl;
-    std::cout << raw_message << std::endl;
     try{
-        // Message msg = protocol->parse_message(raw_message);
         Packet packet(raw_message);
 
         MessageType type = packet.get_type();
