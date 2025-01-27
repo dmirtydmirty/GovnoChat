@@ -10,10 +10,10 @@ void ChatService::add_user(std::shared_ptr<Session> new_user){
     std::cout << "Registred new user id: " << id << std::endl;
 }
 
-void ChatService::send_message(const Message& msg){
+void ChatService::send_packet(const Packet& packet){
     for(const auto& user: m_users) {
-        if (user.first != msg.get_sender())
-            user.second->send(m_protocol->pack_message(msg));
+        if (user.first != packet.get_sender())
+            user.second->send(packet.pack());
     }
 }
 

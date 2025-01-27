@@ -23,7 +23,6 @@ private:
     void handle_accept(boost::asio::ip::tcp::socket&& sock);
 
     boost::asio::io_context& io_context;
-    std::shared_ptr<Protocol> protocol;
     ChatService service;
     std::unique_ptr<Acceptor> acceptor;
 };

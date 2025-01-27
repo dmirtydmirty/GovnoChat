@@ -11,7 +11,7 @@ public:
 
 UserMessage(const std::string& content): m_content(content) {}
 
-std::any get() const {return m_content;}
+std::any get() const {return 0;}
 
 private:
     std::string m_content;

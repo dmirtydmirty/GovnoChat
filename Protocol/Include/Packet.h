@@ -23,7 +23,7 @@ public:
 
     MessageType get_type() const {return m_type;}
     uint32_t get_sender() const {return m_sender;}
-    std::string pack();
+    std::string pack() const;
 private:
 
     u_int32_t m_sender;

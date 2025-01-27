@@ -10,9 +10,8 @@
 
 Server::Server(boost::asio::io_context& io_context, std::uint16_t port) try:
         io_context(io_context),
-        acceptor(std::make_unique<Acceptor>(io_context, port, std::bind(&Server::handle_accept, this, std::placeholders::_1))),
-        protocol(),
-        service(std::shared_ptr<Protocol>(protocol)) {}
+        acceptor(std::make_unique<Acceptor>(io_context, port, std::bind(&Server::handle_accept, this, std::placeholders::_1)))
+        {}
         catch (const boost::system::system_error & err){
             std::cout << "TCPServer::TCPServer: an error " << err.code() << " occured: "<< err.what() << std::endl;
         }
@@ -28,13 +27,15 @@ void Server::stop(){
 
 void Server::handle_message(const std::string& raw_message, uint32_t sender_id){
     std::cout << "Server::handle_message() handling message from user" << sender_id << std::endl;
+    std::cout << raw_message << std::endl;
     try{
-        Message msg = protocol->parse_message(raw_message);
+        // Message msg = protocol->parse_message(raw_message);
+        Packet packet(raw_message);
 
-        MessageType type = msg.get_type();
+        MessageType type = packet.get_type();
         switch (type) {
             case MessageType::USER_MESSAGE:
-                service.send_message(msg);
+                service.send_packet(packet);
             break;
         }
     }
@@ -45,8 +46,9 @@ void Server::handle_message(const std::string& raw_message, uint32_t sender_id){
 
 void Server::handle_disconnect(uint32_t sender_id){
     service.delete_user(sender_id);
-    std::string msg = "User" + std::to_string(sender_id) + " disconnected\n\r";
-    service.send_message(Message(msg, Protocol::SERVER_ID, MessageType::SERVER_STATUS_MESSAGE));
+    std::string msg = "User" + std::to_string(sender_id) + " disconnected";
+    auto status = std::make_shared<ServerStatusMessage>(msg);
+    service.send_packet(Packet(status, MessageType::SERVER_STATUS_MESSAGE, Protocol::SERVER_ID));
 }
 
 void Server::handle_accept(boost::asio::ip::tcp::socket&& sock){
@@ -55,7 +57,7 @@ void Server::handle_accept(boost::asio::ip::tcp::socket&& sock){
                 std::bind(&Server::handle_disconnect,   this, std::placeholders::_1));
     std::string msg = "User" + std::to_string(new_session->get_id()) + " is connected";
     auto status = std::make_shared<ServerStatusMessage>(msg);
-    service.send_message(Packet(status, MessageType::SERVER_STATUS_MESSAGE, Protocol::SERVER_ID));
+    service.send_packet(Packet(status, MessageType::SERVER_STATUS_MESSAGE, Protocol::SERVER_ID));
     new_session->start();
     service.add_user(std::move(new_session));
 

@@ -1,38 +1,35 @@
 #include "../Include/Packet.h"
 
+using namespace nlohmann::literals;
 
 Packet::Packet(const std::string& raw_packet){
-    if (nlohmann::json::accept(raw_packet))
+    if (!nlohmann::json::accept(raw_packet))
         throw std::runtime_error("Incorrect packet format");
 
-    nlohmann::json packet_json{nlohmann::json::parse(raw_packet)};
+    nlohmann::json packet_json = nlohmann::json::parse(raw_packet);
 
-    if (!packet_json["Sender"].is_number_integer())
-        throw std::runtime_error("Incorrect packet content");
+    try{
+        this->m_sender = packet_json.at("Sender").get<uint32_t>();
+        this->m_type = static_cast<MessageType>(packet_json.at("Type").get<uint32_t>());
 
-    if (!packet_json["Type"].is_number_integer())
-        throw std::runtime_error("Incorrect packet content");
-
-    if (!packet_json["Message"].is_object())
-        throw std::runtime_error("Incorrect packet content");
-
-    this->m_sender = packet_json["Sender"].get<uint32_t>();
-    this->m_type = static_cast<MessageType>(packet_json["Type"].get<uint32_t>());
-
-    switch (this->m_type)
-    {
-    case MessageType::USER_MESSAGE :
-        this->m_message = std::make_shared<UserMessage>(packet_json["Sender"].template get<UserMessage>());
-        break;
-    case MessageType::USER_ID_NOTIFICATION :
-        this->m_message = std::make_shared<UserIDNotification>(packet_json["Sender"].template get<UserIDNotification>());
-        break;
-    case MessageType::SERVER_STATUS_MESSAGE :
-        this->m_message = std::make_shared<ServerStatusMessage>(packet_json["Sender"].template get<ServerStatusMessage>());
-        break;   
-    default:
-        throw std::runtime_error("Unknown message type");
-        break;
+        switch (this->m_type)
+        {
+        case MessageType::USER_MESSAGE :
+            this->m_message = std::make_shared<UserMessage>(packet_json.at("Message").template get<UserMessage>());
+            break;
+        case MessageType::USER_ID_NOTIFICATION :
+            this->m_message = std::make_shared<UserIDNotification>(packet_json.at("Message").template get<UserIDNotification>());
+            break;
+        case MessageType::SERVER_STATUS_MESSAGE :
+            this->m_message = std::make_shared<ServerStatusMessage>(packet_json.at("Message").template get<ServerStatusMessage>());
+            break;   
+        default:
+            throw std::runtime_error("Unknown message type");
+            break;
+        }
+    }
+    catch (const nlohmann::json::exception& err){
+        throw std::runtime_error(err.what());
     }
     
 }
@@ -43,7 +40,7 @@ Packet::Packet(const std::shared_ptr<IMessage>& msg, MessageType type, uint32_t 
             m_message(msg){
 }
 
-std::string Packet::pack(){
+std::string Packet::pack() const{
     nlohmann::json packet_json;
     packet_json["Sender"] = this->m_sender;
     packet_json["Type"] = static_cast<uint8_t>(this->m_type);

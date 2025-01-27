@@ -2,7 +2,6 @@
 #define SESSION
 
 #include <boost/asio.hpp>
-#include "../../Protocol/Include/Protocol.h"
 #include <memory>
 
 class Session{
