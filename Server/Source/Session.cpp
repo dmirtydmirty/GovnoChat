@@ -13,7 +13,7 @@ Session::Session(boost::asio::ip::tcp::socket socket, std::function<void(const s
 
 void Session::send(const std::string& msg){
     boost::asio::async_write(
-        socket, boost::asio::buffer(msg),
+        socket, boost::asio::buffer(msg + separator),
         [self = this](
             boost::system::error_code error,
             size_t bytes_transferred){
@@ -33,7 +33,7 @@ void Session::receive(){
     boost::asio::async_read_until(
         socket,
         streambuf,
-        '\n',
+        separator,
         [self = this](
             boost::system::error_code error,
             std::size_t bytes_transferred) {
@@ -46,7 +46,9 @@ void Session::receive(){
             std::cout << "New message from user" << self->get_id() << std::endl;
             std::stringstream message;
             message << std::istream(&self->streambuf).rdbuf();
-            self->message_handler(std::move(message.str()), self->get_id());
+            std::string msg{message.str()};
+            msg.erase(msg.end()-1);
+            self->message_handler(std::move(msg), self->get_id());
             self->receive();
         });
 }

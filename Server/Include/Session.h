@@ -15,6 +15,7 @@ public:
     uint32_t get_id() const {return id;}
     
 private:
+    const char separator = 0x1E;
     static inline uint32_t id_ctr{1};
     uint32_t id;
     boost::asio::ip::tcp::socket socket;
